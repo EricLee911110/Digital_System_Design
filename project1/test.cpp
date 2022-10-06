@@ -338,7 +338,7 @@ int main(int argc, char* argv[]){
     outputFile << "0 [label=0, shape=box]" << endl;
     for (int i = 1; i < totalRows; i++){
         if (table[i][2] != "-1"){
-            outputFile << i << " [lable=\"" << table[i][1] << "\"]" << endl;
+            outputFile << i << " [label=\"" << table[i][1] << "\"]" << endl;
         }
     }
     outputFile << to_string(totalRows) << " [label=1, shape=box]" << endl;
