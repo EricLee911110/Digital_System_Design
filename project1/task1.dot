@@ -1,0 +1,5 @@
+digraph ROBDD{
+{rank=same 1}
+{rank=same 2 3}
+{rank=same 4 5}
+{rank=same 9}
