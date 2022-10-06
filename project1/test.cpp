@@ -305,8 +305,8 @@ int main(int argc, char* argv[]){
 
 
 
-    // output File
-    // Part 1
+    // outputFile part 1
+
     string outputFileName = argv[2];
     ofstream outputFile (outputFileName);
     outputFile << "digraph ROBDD{" << endl;
@@ -332,8 +332,26 @@ int main(int argc, char* argv[]){
         cout << i << levelGroups[i] << endl;
         outputFile << "{rank=same" << levelGroups[i] << "}" << endl;;
     }
+    outputFile << endl;
 
+    // outputFile part 2
+    outputFile << "0 [label=0, shape=box]" << endl;
+    for (int i = 1; i < totalRows; i++){
+        if (table[i][2] != "-1"){
+            outputFile << i << " [lable=\"" << table[i][1] << "\"]" << endl;
+        }
+    }
+    outputFile << to_string(totalRows) << " [label=1, shape=box]" << endl;
 
+    outputFile << endl;
+    // outputFile part 3
+    for (int i = 1; i < totalRows; i++){
+        if (table[i][2] != "-1"){
+            outputFile << to_string(i) << " -> " << table[i][2] << " [label=\"0\", style=dotted]" << endl;
+            outputFile << to_string(i) << " -> " << table[i][3] << " [label=\"1\", style=solid]" << endl;
+        }
+    }
+    outputFile << "}";
 
 
     outputFile.close();
