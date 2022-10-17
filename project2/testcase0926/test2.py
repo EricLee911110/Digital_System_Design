@@ -19,11 +19,3 @@
 
 # name = findName("0110")
 # print(name)
-
-for i in range(5):
-    for ii in range(4):
-        if i == 3:
-            for iii in range(10):
-                print(i, ii, iii)
-                if iii == 3:
-                    continue

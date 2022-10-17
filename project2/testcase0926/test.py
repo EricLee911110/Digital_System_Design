@@ -1,12 +1,57 @@
-inputs = ["00-0 1",
-          "0-11 1",
-          "1-01 1",
-          "0101 1",
-          "1111 -",
-          "100- 1",
-          "-01- 1"]
+whichtest = 3
 
-num_var = 4
+# first testcase
+if whichtest == 1:
+    inputs = ["00-0 1",
+            "0-11 1",
+            "1-01 1",
+            "0101 1",
+            "1111 -",
+            "100- 1",
+            "-01- 1"
+    ]
+
+# second testcase
+if whichtest == 2:
+    num_var = 5
+    inputs = ["00000 -",
+            "00011 -",
+            "00101 -",
+            "00110 1",
+            "00111 -",
+            "01001 1",
+            "01010 -",
+            "01011 -",
+            "01110 1",
+            "01111 1",
+            "10100 -",
+            "10101 1",
+            "10111 1",
+            "11000 -",
+            "11001 -",
+            "11010 1",
+            "11101 1",
+            "11110 1"
+    ]
+
+# third testcase
+if whichtest == 3:
+    num_var = 6
+    inputs = ["001000 1",
+            "0-1011 1",
+            "1-0101 1",
+            "11-100 1",
+            "111101 -",
+            "1-0111 1",
+            "-0111- 1"
+    ]
+    
+
+
+
+
+
+
 
 pre_level = []
 dontCare = []
@@ -198,7 +243,9 @@ for i in range(len(finalPI)):
 for i in range(len(finalPI_delete_idx) - 1, -1, -1):
     finalPI.pop(finalPI_delete_idx[i])
 
-print("uni_finalPI: \n", finalPI, "\n")
+finalPI.reverse()
+
+print("uni_reversed_finalPI: \n", finalPI, "\n")
     
 levels_need_cover = pre_level
 print("levels_need_cover: \n", levels_need_cover, "\n")
@@ -259,16 +306,25 @@ def find_unique_idx(arr):
     
     return unique_idx
 
+# return False if the idx is dont care, True if not
+def isNotDontCare(idx, dontCare):
+    # print("inside the dontCare function")
+    for i in range(len(dontCare)):
+        # print(idx, " ", dontCare[i].split(' ')[2])
+        if idx == int(dontCare[i].split(' ')[2]):
+            return False
+
+    return True
 
 # return False if not done, True if done
 def checkUseStat(currentStat, dontCare):
+    # print("inside checkUseStat function")
+    # print("currentStat: \n", currentStat)
+
     for i in range(len(currentStat)):
-        if currentStat[i] == 0:
-            for ii in range(len(dontCare)):
-                if i == dontCare[ii].split(' ')[2]:
-                    pass
-                else:
-                    return False
+        if isNotDontCare(i, dontCare):
+            if currentStat[i] == 0:
+                return False
 
     return True
 
@@ -281,10 +337,11 @@ print("useStat: ", useStat, " status: ", checkUseStat(useStat, dontCare), "\n")
 rowUsed = []
 
 
+
 # function call start here
 def find_ePI(sum_in_column, useStat, oneHotTable, dontCare, rowUsed):
     unique_idx = find_unique_idx(sum_in_column)
-    print("unique_idx: ", unique_idx, "\n")
+    print("unique_idx: ", unique_idx)
 
     if checkUseStat(useStat, dontCare) == True:
         return rowUsed
@@ -292,41 +349,40 @@ def find_ePI(sum_in_column, useStat, oneHotTable, dontCare, rowUsed):
     # priority 1: there is unique element and it is not dontCare
     first_ePI_row = -1
     for e in range(len(unique_idx)): 
-        if useStat[unique_idx[e]] == 0:
-            for row in range(len(oneHotTable)):
-                if row not in rowUsed:            
-                    if oneHotTable[row][unique_idx[e]] == 1:    # if sum_in_column's 1 match oneHotTable_row's 1
-                        for ee in range(len(dontCare)):         # also you shouldn't be in dontCare
-                            if e != dontCare[ee].split(' ')[2]:
-                                first_ePI_row = row             # got the first ePI
-                                rowUsed.append(first_ePI_row)
+        if isNotDontCare(unique_idx[e], dontCare):
+            if useStat[unique_idx[e]] == 0:
+                for row in range(len(oneHotTable)):
+                    if row not in rowUsed:            
+                        if oneHotTable[row][unique_idx[e]] == 1:    # if sum_in_column's 1 match oneHotTable_row's 1
+                            first_ePI_row = row             # got the first ePI
+                            rowUsed.append(first_ePI_row)
 
-                                for eee in range(len(oneHotTable[row])):
-                                    if oneHotTable[row][eee] == 1:
-                                        sum_in_column[eee] -= 1
-                                        useStat[eee] = 1
+                            for eee in range(len(oneHotTable[row])):
+                                if oneHotTable[row][eee] == 1:
+                                    sum_in_column[eee] -= 1
+                                    useStat[eee] = 1
 
-                                print("Priority 1:")
-                                print("row pick: ", row)
-                                print("oneHotTable: ", oneHotTable)
-                                print("NEW sum_in_column: \n", sum_in_column)
-                                print("New useStat: \n", useStat, "\n")
-                                
-                                return find_ePI(sum_in_column, useStat, oneHotTable, dontCare, rowUsed)
-                                
-                                # just return here so the rest are ignored
-                                # return new (sum_in_column, useStat, oneHotTable(static), dontCare(static), rowUsed)
+                            print("Priority 1:")
+                            print("row pick: ", row)
+                            print("oneHotTable: ", oneHotTable)
+                            print("NEW sum_in_column: \n", sum_in_column)
+                            print("New useStat: \n", useStat, "\n")
+                            print("\n")
+                            
+                            return find_ePI(sum_in_column, useStat, oneHotTable, dontCare, rowUsed)
+                            
+                            # just return here so the rest are ignored
+                            # return new (sum_in_column, useStat, oneHotTable(static), dontCare(static), rowUsed)
         
-    
+        
 
     # priority 2: There is no unique element, dont want dontCare inside, also want largest(maybe try sort the oneHotTable first)
     for row in range(len(oneHotTable)):
-        if row not in rowUsed:
-            for e in range(len(oneHotTable[row])):
-                if oneHotTable[row][e] == 1:
-                    if useStat[e] == 0:
-                        for ee in range(len(dontCare)):
-                            if oneHotTable[row][e] != dontCare[ee].split(' ')[2]:
+            if row not in rowUsed:
+                for e in range(len(oneHotTable[row])):
+                    if isNotDontCare(e, dontCare):
+                        if oneHotTable[row][e] == 1:
+                            if useStat[e] == 0:
                                 first_ePI_row = row
                                 rowUsed.append(first_ePI_row)
 
@@ -356,7 +412,7 @@ def find_ePI(sum_in_column, useStat, oneHotTable, dontCare, rowUsed):
                     sum_in_column[eee] -= 1
                     useStat[eee] = 1
 
-            print("Priority 2:")
+            print("Priority 3:")
             print("row pick: ", row)
             print("oneHotTable: ", oneHotTable)
             print("NEW sum_in_column: \n", sum_in_column)
@@ -378,8 +434,15 @@ def find_ePI(sum_in_column, useStat, oneHotTable, dontCare, rowUsed):
 rowUsed = find_ePI(sum_in_column, useStat, oneHotTable, dontCare, rowUsed)
 print("rowUsed: ", rowUsed, "\n")
 
+count = 0
 for i in range(len(rowUsed)):
     print(finalPI[rowUsed[i]])
+    bi_num = finalPI[rowUsed[i]].split(' ')[0]
+    for e in range(len(bi_num)):
+        if bi_num[e] != "-":
+            count += 1
 
 
 # then you output
+print(f"total literals: {count}")
+print("\n")
