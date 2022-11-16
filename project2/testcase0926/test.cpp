@@ -141,6 +141,7 @@ int main(int argc, char* argv[]){
     }
 
 
-
+    // welcome to c++ :)
+    // Next you're going to make your condition a value-name pair
 
 }
